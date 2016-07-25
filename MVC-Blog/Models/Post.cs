@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 
@@ -20,7 +21,7 @@ namespace MVC_Blog.Models
         }
 
         [Required]
-        [StringLength(200)]
+        [StringLength(250)]
         public string Title
         {
             get; set;
@@ -39,7 +40,18 @@ namespace MVC_Blog.Models
             get; set;
         }
 
+        public string Author_Id
+        {
+            get; set;
+        }
+
+        [ForeignKey("Author_Id")]
         public ApplicationUser Author
+        {
+            get; set;
+        }
+
+        public ICollection<Comment> Comments
         {
             get; set;
         }

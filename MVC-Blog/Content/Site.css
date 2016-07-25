@@ -23,12 +23,17 @@ textarea {
     max-width: 280px;
 }
 
+.sidebar {
+    background: #DDD;
+    margin-top: 10px;;
+}
+
 .post {
     margin-top: 10px;
 }
 
 .post>h2, .post>div {
     background: #DDD;
-    padding: 5px;
+    padding: 10px;
     margin: 0;
 }
