@@ -18,7 +18,7 @@ namespace MVC_Blog.Controllers
         // GET: Posts
         public ActionResult Index()
         {
-            return View(db.Posts.Include(p => p.Author).ToList());
+            return View(db.Posts.Include(p => p.Author).OrderByDescending(p => p.Date).ToList());
         }
 
         // GET: Posts/Details/5
@@ -63,15 +63,16 @@ namespace MVC_Blog.Controllers
         }
 
         // GET: Posts/Edit/5
-        [Authorize(Roles = "Administrators")]
+        [Authorize]
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
-            if (post == null)
+            Post post = db.Posts.Include(p => p.Author).SingleOrDefault(p => p.Id == id);
+            
+            if ((post == null) || (post.Author.UserName != User.Identity.Name) && (!User.IsInRole("Administrators")))
             {
                 return HttpNotFound();
             }
@@ -85,7 +86,7 @@ namespace MVC_Blog.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrators")]
+        [Authorize]
         public ActionResult Edit([Bind(Include = "Id,Title,Body,Date,Author_Id")] Post post)
         {
             if (ModelState.IsValid)
@@ -98,15 +99,15 @@ namespace MVC_Blog.Controllers
         }
 
         // GET: Posts/Delete/5
-        [Authorize(Roles = "Administrators")]
+        [Authorize]
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
-            if (post == null)
+            Post post = db.Posts.Include(p => p.Author).SingleOrDefault(p => p.Id == id);
+            if ((post == null) || (post.Author.UserName != User.Identity.Name) && (!User.IsInRole("Administrators")))
             {
                 return HttpNotFound();
             }
@@ -116,7 +117,7 @@ namespace MVC_Blog.Controllers
         // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrators")]
+        [Authorize]
         public ActionResult DeleteConfirmed(int id)
         {
             Post post = db.Posts.Find(id);
